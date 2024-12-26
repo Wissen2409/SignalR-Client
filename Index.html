@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.7/signalr.min.js"></script>
+</head>
+
+<body>
+    <h1>SignalR Client</h1>
+    <div id="message"></div>
+    <input type="text" id="userInput" placeholder="User">
+    <input type="text" id="messageInput" placeholder="Message">
+    <button onclick="sendMessage()">Send Message</button>
+    <script>
+
+        connection = new signalR.HubConnectionBuilder()
+            .withUrl("/chatHub")
+            .build();
+
+        connection.on("ReceiveMessage", (user, message) => {
+
+            var msg = `${user}:${message}`;
+            var li = document.createElement("li");
+            li.textContent = message;
+            document.getElementById("message").appendChild(li);
+
+        });
+
+        async function sendMessage() {
+
+            debugger;
+            var user = document.getElementById("userInput").value;
+            var message = document.getElementById("messageInput").value;
+
+            var response = await fetch("https://api.allorigins.win/get?url=http://localhost:5216/api/chat/send", {
+                method: "POST",
+                headers: {
+                    'Content-Type': "application/json"
+                },
+                body: JSON.stringify({ User: user, Message: message }),
+            });
+            debugger;
+            if (!response.ok) {
+
+                alert("Mesaj Gönderilemedi");
+            }
+        }
+
+    </script>
+</body>
+
+</html>
