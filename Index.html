@@ -21,7 +21,7 @@
             .build();
 
         connection.on("ReceiveMessage", (user, message) => {
-
+            debugger;
             var msg = `${user}:${message}`;
             var li = document.createElement("li");
             li.textContent = message;
@@ -35,7 +35,7 @@
             var user = document.getElementById("userInput").value;
             var message = document.getElementById("messageInput").value;
 
-            var response = await fetch("https://api.allorigins.win/get?url=http://localhost:5216/api/chat/send", {
+            var response = await fetch("http://localhost:5216/api/chat/send", {
                 method: "POST",
                 headers: {
                     'Content-Type': "application/json"
