@@ -10,39 +10,53 @@
 
 <body>
     <h1>SignalR Client</h1>
-    <div id="message"></div>
+    
     <input type="text" id="userInput" placeholder="User">
     <input type="text" id="messageInput" placeholder="Message">
     <button onclick="sendMessage()">Send Message</button>
+
+    <div id="message"></div>
     <script>
 
         connection = new signalR.HubConnectionBuilder()
-            .withUrl("/chatHub")
+            .withUrl("http://wissenchatapi.runasp.net/chatHub")
             .build();
 
         connection.on("ReceiveMessage", (user, message) => {
-            debugger;
             var msg = `${user}:${message}`;
             var li = document.createElement("li");
-            li.textContent = message;
+            li.textContent = msg;
             document.getElementById("message").appendChild(li);
 
         });
 
+        async function start() {
+            try {
+                await connection.start();
+                alert("SignalR Connected.");
+            } catch (err) {
+                alert(err);
+                setTimeout(start, 5000);
+            }
+        };
+ 
+        connection.onclose(async () => {
+            await start();
+        });
+ 
+        // Start the connection.
+        start();
         async function sendMessage() {
-
-            debugger;
             var user = document.getElementById("userInput").value;
             var message = document.getElementById("messageInput").value;
 
-            var response = await fetch("http://localhost:5216/api/chat/send", {
+            var response = await fetch("http://wissenchatapi.runasp.net/api/chat/send", {
                 method: "POST",
                 headers: {
                     'Content-Type': "application/json"
                 },
                 body: JSON.stringify({ User: user, Message: message }),
             });
-            debugger;
             if (!response.ok) {
 
                 alert("Mesaj Gönderilemedi");
